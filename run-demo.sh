@@ -13,41 +13,48 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-# CONFIGURATION - Update these to your Docker Hub details
+# CONFIGURATION
 DOCKER_HUB_ID="taiwrash"
-COMPOSE_URL="https://raw.githubusercontent.com/taiwrash/almag-demo/main/docker-compose.yml"
 
-echo -e "${MAGENTA}==========================================${NC}"
-echo -e "${MAGENTA}   🛡️  Almag Cloud-Ready Demo Launcher 🛡️   ${NC}"
-echo -e "${MAGENTA}==========================================${NC}"
 
-# 1. Download the public compose file if it doesn't exist
+# 1. Environment & Port Configuration
+export FRONTEND_PORT=80
+export BACKEND_PORT=8080
+
+echo -e "${BLUE}🔍 Checking port availability...${NC}"
+if lsof -Pi :80 -sTCP:LISTEN -t >/dev/null ; then
+    echo -e "${YELLOW}⚠️  Port 80 is busy. Switching Almag to Port 3000 for this session...${NC}"
+    export FRONTEND_PORT=3000
+fi
+
+# 2. Generate/Download the public compose file
 if [ ! -f "docker-compose.yml" ]; then
-    echo -e "${BLUE}📥 Downloading deployment configuration...${NC}"
-    # Use curl to download your public docker-compose.yml
-    # curl -sSL $COMPOSE_URL > docker-compose.yml
+    echo -e "${BLUE}📥 Generating deployment configuration...${NC}"
     
-    # FOR NOW: I will create a local copy since we are testing
     cat <<EOF > docker-compose.yml
 services:
   backend:
     image: $DOCKER_HUB_ID/almag-backend:v1
     ports:
-      - "\${BACKEND_PORT:-8081}:8080"
+      - "\${BACKEND_PORT:-8080}:8080"
     volumes:
       - almag_data:/data
     environment:
       - DATABASE_PATH=/data/almag.db
       - JWT_SECRET=\${JWT_SECRET:-dev-default-secret-key}
       - GIN_MODE=release
+    restart: always
+
   frontend:
     image: $DOCKER_HUB_ID/almag-frontend:v1
     ports:
-      - "\${FRONTEND_PORT:-3000}:80"
+      - "\${FRONTEND_PORT:-80}:80"
     environment:
-      - VITE_API_URL=http://localhost:\${BACKEND_PORT:-8081}
+      - VITE_API_URL=http://localhost:\${BACKEND_PORT:-8080}
     depends_on:
       - backend
+    restart: always
+
 volumes:
   almag_data:
 EOF
