@@ -21,5 +21,11 @@ services:
       - backend
     restart: always
 
+  # Exposes the backend to the internet for GitHub Actions testing
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --url http://backend:8080
+    restart: always
+
 volumes:
   almag_data:
