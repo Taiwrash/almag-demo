@@ -27,9 +27,8 @@ if lsof -Pi :80 -sTCP:LISTEN -t >/dev/null ; then
     export FRONTEND_PORT=3000
 fi
 
-# 2. Generate/Download the public compose file
-if [ ! -f "docker-compose.yml" ]; then
-    echo -e "${BLUE}📥 Generating deployment configuration...${NC}"
+# 2. Generate deployment configuration
+echo -e "${BLUE}📥 Generating deployment configuration...${NC}"
     
     cat <<EOF > docker-compose.yml
 services:
@@ -55,10 +54,15 @@ services:
       - backend
     restart: always
 
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --url http://backend:8080
+    restart: always
+
 volumes:
   almag_data:
 EOF
-fi
+
 
 # 2. Check Docker
 if ! docker info > /dev/null 2>&1; then
@@ -67,11 +71,72 @@ if ! docker info > /dev/null 2>&1; then
 fi
 
 # 3. Pull and Start
-echo -e "${BLUE}🛳️  Pulling images from Docker Hub...${NC}"
+echo -e "${BLUE}🛳️  Pulling images...${NC}"
 docker compose pull
 docker compose up -d
 
-# 4. Success Message
-echo -e "\n${GREEN}✅ Almag is running!${NC}"
-echo -e "🔗 URL: ${YELLOW}http://localhost:3000${NC}"
-echo -e "\nTo stop the demo later, run: ${NC}docker compose down${NC}"
+# 4. Wait for Readiness
+echo -e "\n${BLUE}⏳ Waiting for services to initialize...${NC}"
+MAX_RETRIES=20
+COUNT=0
+READY=false
+
+while [ $COUNT -lt $MAX_RETRIES ]; do
+    if curl -s -o /dev/null http://localhost:$FRONTEND_PORT; then
+        READY=true
+        break
+    fi
+    echo -n "🚀 "
+    sleep 2
+    COUNT=$((COUNT + 1))
+done
+
+echo ""
+
+if [ "$READY" = true ]; then
+    echo -e "${GREEN}✅ Almag is now LIVE!${NC}"
+    
+    DEMO_URL="http://localhost:$FRONTEND_PORT"
+    
+    # Extract the Cloudflare Tunnel URL
+    echo -e "${BLUE}🌐 Generating Public URL for GitHub Actions...${NC}"
+    
+    # Retry loop to find the URL in logs (it can take ~10-15 seconds)
+    MAX_TUNNEL_RETRIES=10
+    T_COUNT=0
+    TUNNEL_URL=""
+    
+    while [ $T_COUNT -lt $MAX_TUNNEL_RETRIES ]; do
+        echo -n "☁️  "
+        TUNNEL_URL=$(docker compose logs tunnel 2>&1 | grep -o 'https://.*\.trycloudflare\.com' | head -n 1)
+        if [ ! -z "$TUNNEL_URL" ]; then
+            break
+        fi
+        sleep 3
+        T_COUNT=$((T_COUNT + 1))
+    done
+    echo ""
+
+    echo -e "\n${MAGENTA}------------------------------------------${NC}"
+    echo -e "${MAGENTA}🎉 SUCCESS! Your Almag instance is ready.${NC}"
+    echo -e "${MAGENTA}🔗 Web Dashboard: ${YELLOW}$DEMO_URL${NC}"
+    
+    if [ ! -z "$TUNNEL_URL" ]; then
+        echo -e "${MAGENTA}📡 Public API URL: ${YELLOW}$TUNNEL_URL${NC}"
+        echo -e "   (Use this URL in your GitHub Actions ALMAG_URL secret)${NC}"
+    fi
+    echo -e "${MAGENTA}------------------------------------------${NC}"
+    
+    # Try to open the browser automatically
+    if which open > /dev/null; then
+        open "$DEMO_URL"
+    fi
+
+    echo -e "\n${BLUE}📝 Next Steps:${NC}"
+    echo -e "1. Create a new account on the landing page."
+    echo -e "2. Copy the Public API URL to use in GitHub Actions."
+    echo -e "3. To stop the demo, run: ${NC}docker compose down${NC}"
+else
+    echo -e "${RED}❌ Demo failed to start.${NC}"
+    exit 1
+fi
