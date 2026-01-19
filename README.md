@@ -17,7 +17,7 @@ Welcome to the **Almag** demonstration repository. Almag is the safety rail for 
 </a>
 
 ## Project Brief
-[Brief](#brief.md)
+[Brief](brief.md)
 
 ## 🚀 Quick Start (One-Click)
 
