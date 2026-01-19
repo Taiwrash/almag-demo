@@ -1,0 +1,25 @@
+services:
+  backend:
+    image: taiwrash/almag-backend:v1
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    volumes:
+      - almag_data:/data
+    environment:
+      - DATABASE_PATH=/data/almag.db
+      - JWT_SECRET=${JWT_SECRET:-dev-default-secret-key}
+      - GIN_MODE=release
+    restart: always
+
+  frontend:
+    image: taiwrash/almag-frontend:v1
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    environment:
+      - VITE_API_URL=http://localhost:${BACKEND_PORT:-8080}
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  almag_data:
