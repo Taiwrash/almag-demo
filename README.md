@@ -7,7 +7,7 @@ Welcome to the **Almag** demonstration repository. Almag is the safety rail for 
 
 ## Demo video
 
-<a href="https://youtu.be/sFr7Uynu8GY" target="_blank">
+<a href="https://youtu.be/sFr7Uynu8GY" target="_blank" rel="noopener noreferrer">
   <img
     width="1369"
     height="781"
