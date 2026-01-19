@@ -5,6 +5,20 @@ Welcome to the **Almag** demonstration repository. Almag is the safety rail for 
 > **Note to Organizers/Judges:** This repository contains the deployment configuration for the Almag demonstration. Due to intellectual property considerations, the core application source code is currently hosted in a private repository. If you require access to the full codebase for technical review, please contact the team member directly `rasheedrtm1@gmail.com`. Thanks for your understanding and consideration
 ---
 
+## Demo video
+
+<a href="https://youtu.be/sFr7Uynu8GY" target="_blank">
+  <img
+    width="1369"
+    height="781"
+    alt="Screenshot 2026-01-19 at 13 51 23"
+    src="https://github.com/user-attachments/assets/c414e3c6-0f69-4c7e-be01-f32d5e787f9c"
+  />
+</a>
+
+## Project Brief
+[Brief](#brief.md)
+
 ## 🚀 Quick Start (One-Click)
 
 The easiest way to run the Almag demo is using our automation script. This script will check your system requirements and launch the application on an available port.
