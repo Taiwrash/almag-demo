@@ -1,13 +1,11 @@
-# Almag - Nexora Hacks 2026 Demo
-
-Welcome to the **Almag** demonstration repository. Almag is the safety rail for AI-accelerated development, providing an intelligent, enforceable release gate for security findings.
-
-> **Note to Organizers/Judges:** This repository contains the deployment configuration for the Almag demonstration. Due to intellectual property considerations, the core application source code is currently hosted in a private repository. If you require access to the full codebase for technical review, please contact the team member directly `rasheedrtm1@gmail.com`. Thanks for your understanding and consideration
+# Almag
+Welcome to the **Almag** demonstration repository. 
+> Almag is the safety rail for AI-accelerated development, providing an intelligent, enforceable release gate for security findings.
 ---
 
 ## Demo video
 
-<a href="https://youtu.be/sFr7Uynu8GY" target="_blank" rel="noopener noreferrer">
+<a href="https://youtu.be/sFr7Uynu8GY?si=2WNQlLERJ_7s8V9E&t=12" target="_blank" rel="noopener noreferrer">
   <img
     width="1369"
     height="781"
@@ -71,7 +69,6 @@ Once the platform is running, you can explore the following features:
 ## 📬 Contact & Code Access
 
 If you are an organizer or technical judge and would like to review the Go/React source code, please reach out via:
-- **Devpost Profile**: https://devpost.com/rasheedrtm1
-- **Contact Email**: rasheedrtm1@gmail.com
-
+- **Portfolio**: [https://taiwrash.xyz](taiwrash.xyz)
+- **Contact Email**: dev@taiwrash.xyz
 We are happy to provide temporary access to our private repositories for evaluation purposes.
